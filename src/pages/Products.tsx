@@ -5,7 +5,7 @@ import ProductCard from '../components/products/ProductCard';
 import SearchBar from '../components/layout/SearchBar';
 import FilterSidebar from '../components/products/FilterSidebar';
 import { Button } from '../components/ui/button';
-import { Loader2, AlertCircle, RefreshCw, Filter, Grid3X3, List, Package, X } from 'lucide-react';
+import { Loader2, AlertCircle, RefreshCw, Filter, Grid3X3, List, Package} from 'lucide-react';
 
 const Products: React.FC = () => {
   const { 

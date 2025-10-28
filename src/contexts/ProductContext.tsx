@@ -140,9 +140,9 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     fetchProducts();
   }, [fetchProducts]);
 
-  const allProducts = useMemo(() => {
-    return [...products, ...localProducts];
-  }, [products, localProducts]);
+  // const allProducts = useMemo(() => {
+  //   return [...products, ...localProducts];
+  // }, [products, localProducts]);
 
   const value: ExtendedProductState = {
     products: filteredProducts,

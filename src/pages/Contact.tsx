@@ -101,14 +101,14 @@ _Sent from Adipas Website_`;
     }
   ];
 
-  const subjectOptions = [
-    'General Inquiry',
-    'Product Support',
-    'Partnership Opportunity',
-    'Technical Issue',
-    'Feedback & Suggestions',
-    'Other'
-  ];
+//   const subjectOptions = [
+//     'General Inquiry',
+//     'Product Support',
+//     'Partnership Opportunity',
+//     'Technical Issue',
+//     'Feedback & Suggestions',
+//     'Other'
+//   ];
 
   return (
     <div className="min-h-screen bg-background">

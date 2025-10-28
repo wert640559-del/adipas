@@ -18,7 +18,6 @@ const Navbar: React.FC = () => {
     { path: '/products', label: 'Products' },
     { path: '/about', label: 'About' },
     { path: '/contact', label: 'Contact'},
-    { path: '/cart', label: 'Cart' },
     ...(isAuthenticated ? [{ path: '/dashboard', label: 'Dashboard' }] : [])
   ];
 
@@ -66,7 +65,7 @@ const Navbar: React.FC = () => {
             </div>
 
             {/* Cart Icon */}
-            <Link to="/cart" className="relative">
+           <Link to="/cart" className="relative">
               <Button variant="ghost" size="icon" className="h-9 w-9">
                 <ShoppingCart className="h-4 w-4" />
                 {getTotalItems() > 0 && (
@@ -110,6 +109,17 @@ const Navbar: React.FC = () => {
 
           {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center space-x-2">
+            <Link to="/cart" className="relative">
+              <Button variant="ghost" size="icon" className="h-9 w-9">
+                <ShoppingCart className="h-4 w-4" />
+                {getTotalItems() > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {getTotalItems()}
+                  </span>
+                )}
+              </Button>
+            </Link>
+
             <Button
               variant="ghost"
               size="icon"

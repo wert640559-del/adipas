@@ -50,3 +50,18 @@ export interface CartState {
   getTotalPrice: () => number;
   getTotalItems: () => number;
 }
+
+export interface FilterState {
+  category: string;
+  minPrice: number;
+  maxPrice: number;
+  minRating: number;
+}
+
+export interface ExtendedProductState extends ProductState {
+  filters: FilterState;
+  categories: string[];
+  updateFilters: (newFilters: Partial<FilterState>) => void;
+  clearFilters: () => void;
+  isAnyFilterActive: boolean;
+}

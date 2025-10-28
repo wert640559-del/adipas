@@ -1,7 +1,24 @@
+// src/contexts/ProductContext.tsx
 import React, { createContext, useContext, useState, type ReactNode, useCallback, useMemo } from 'react';
 import type { Product, ProductState } from '../types';
 
-const ProductContext = createContext<ProductState | undefined>(undefined);
+// Tambahkan interface untuk filter
+interface FilterState {
+  category: string;
+  minPrice: number;
+  maxPrice: number;
+  minRating: number;
+}
+
+interface ExtendedProductState extends ProductState {
+  filters: FilterState;
+  categories: string[];
+  updateFilters: (newFilters: Partial<FilterState>) => void;
+  clearFilters: () => void;
+  isAnyFilterActive: boolean;
+}
+
+const ProductContext = createContext<ExtendedProductState | undefined>(undefined);
 
 export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -9,11 +26,85 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // State untuk filter
+  const [filters, setFilters] = useState<FilterState>({
+    category: 'all',
+    minPrice: 0,
+    maxPrice: 1000,
+    minRating: 0
+  });
 
+  // Get unique categories
+  const categories = useMemo(() => {
+    const allCategories = products.map(product => product.category);
+    return ['all', ...Array.from(new Set(allCategories))];
+  }, [products]);
+
+  // Check if any filter is active
+  const isAnyFilterActive = useMemo(() => {
+    return filters.category !== 'all' || 
+           filters.minPrice > 0 || 
+           filters.maxPrice < 1000 || 
+           filters.minRating > 0;
+  }, [filters]);
+
+  // Apply search and filters
+  const filteredProducts = useMemo(() => {
+    let filtered = products;
+
+    // Apply search
+    if (searchQuery) {
+      filtered = filtered.filter(product =>
+        product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Apply filters
+    filtered = filtered.filter(product => {
+      // Filter category
+      if (filters.category !== 'all' && product.category !== filters.category) {
+        return false;
+      }
+      
+      // Filter price
+      if (product.price < filters.minPrice || product.price > filters.maxPrice) {
+        return false;
+      }
+      
+      // Filter rating
+      if (product.rating.rate < filters.minRating) {
+        return false;
+      }
+      
+      return true;
+    });
+
+    return filtered;
+  }, [products, searchQuery, filters]);
+
+  // Update filters
+  const updateFilters = useCallback((newFilters: Partial<FilterState>) => {
+    setFilters(prev => ({ ...prev, ...newFilters }));
+  }, []);
+
+  // Clear all filters
+  const clearFilters = useCallback(() => {
+    setFilters({
+      category: 'all',
+      minPrice: 0,
+      maxPrice: 1000,
+      minRating: 0
+    });
+  }, []);
+
+  // Existing functions...
   const addProduct = useCallback((productData: Omit<Product, 'id'>) => {
     const newProduct: Product = {
       ...productData,
-      id: Date.now() // Simple ID generation for local products
+      id: Date.now()
     };
     setLocalProducts(prev => [...prev, newProduct]);
   }, []);
@@ -53,16 +144,7 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     return [...products, ...localProducts];
   }, [products, localProducts]);
 
-  const filteredProducts = useMemo(() => {
-    if (!searchQuery) return allProducts;
-    return allProducts.filter(product =>
-      product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [allProducts, searchQuery]);
-
-  const value: ProductState = {
+  const value: ExtendedProductState = {
     products: filteredProducts,
     localProducts,
     loading,
@@ -71,7 +153,13 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     setSearchQuery,
     addProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    // Filter related
+    filters,
+    categories,
+    updateFilters,
+    clearFilters,
+    isAnyFilterActive
   };
 
   return (

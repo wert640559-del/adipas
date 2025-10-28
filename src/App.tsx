@@ -15,6 +15,7 @@ import Dashboard from './pages/Dashboard';
 import About from './pages/About';
 import Cart from './pages/Cart';
 import './App.css'
+import Contact from './pages/Contact';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
                       <Route path="/login" element={<Login />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/cart" element={<Cart />} />
+                      <Route path='/contact' element={<Contact/>}/>
                       <Route
                         path="/dashboard"
                         element={

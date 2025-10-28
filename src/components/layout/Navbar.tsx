@@ -17,6 +17,7 @@ const Navbar: React.FC = () => {
   const navItems = [
     { path: '/products', label: 'Products' },
     { path: '/about', label: 'About' },
+    { path: '/contact', label: 'Contact'},
     { path: '/cart', label: 'Cart' },
     ...(isAuthenticated ? [{ path: '/dashboard', label: 'Dashboard' }] : [])
   ];

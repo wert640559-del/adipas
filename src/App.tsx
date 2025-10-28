@@ -15,6 +15,7 @@ import About from './pages/About';
 import Cart from './pages/Cart';
 import './App.css'
 import Contact from './pages/Contact';
+import Checkout from './pages/Checkout';
 
 function App() {
   return (
@@ -22,9 +23,10 @@ function App() {
       <ErrorBoundary>
         <AuthProvider>
           <ProductProvider>
-            <CartProvider> {/* HANYA SATU CartProvider */}
+            <CartProvider>
               <Router>
                 <div className="min-h-screen bg-background text-foreground">
+                  {/* NAVBAR HARUS DI DALAM CartProvider */}
                   <Navbar />
                   <main>
                     <Routes>
@@ -35,6 +37,7 @@ function App() {
                       <Route path="/about" element={<About />} />
                       <Route path="/cart" element={<Cart />} />
                       <Route path='/contact' element={<Contact/>}/>
+                      <Route path="/cart/checkout" element={<Checkout />} />
                       <Route
                         path="/dashboard"
                         element={

@@ -4,7 +4,7 @@ import { useProducts } from '../hooks/useProducts';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { ArrowLeft, Star, Heart, ShoppingCart, Truck, Shield, RotateCcw } from 'lucide-react';
-import { useCart } from '@/contexts/CartContext';
+import { useCart } from '@/hooks/useCart';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -36,14 +36,32 @@ const ProductDetail: React.FC = () => {
 
   const images = [product.image, product.image, product.image]; // Simulasi multiple images
 
-  const handleAddToCart = () => {
-    if (product) {
-      console.log('Adding product to cart from detail page:', product.title);
-      addToCart(product);
-      // You can add a toast notification here
-      alert(`${product.title} added to cart!`); // Temporary feedback
-    }
-  };
+   // Di ProductDetail.tsx - tanpa mengubah CartContext
+const handleAddToCart = () => {
+  if (product) {
+    console.log('🛒 ProductDetail: Adding to cart:', product.title, quantity);
+    
+    try {
+      // Tambahkan produk sebanyak quantity kali
+      for (let i = 0; i < quantity; i++) {
+        addToCart(product);
+      }
+      
+      // Alert untuk feedback
+      alert(`✅ ${product.title} (${quantity} ${quantity === 1 ? 'item' : 'items'}) added to cart!`);
+      
+      // Reset quantity setelah berhasil ditambahkan
+      setQuantity(1);
+      
+      console.log('🛒 ProductDetail: Add to cart completed');
+        } catch (error) {
+          console.error('❌ ProductDetail: Error adding to cart:', error);
+          alert('❌ Failed to add product to cart. Please try again.');
+        }
+      } else {
+        console.error('❌ ProductDetail: Cannot add to cart - product is null');
+      }
+    };
 
   return (
     <div className="min-h-screen bg-background">

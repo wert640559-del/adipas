@@ -22,14 +22,16 @@ const ProductCard = memo<ProductCardProps>(({ product, onEdit, onDelete }) => {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Add to cart clicked for:', product.title);
+    console.log('🛒 ProductCard: Add to cart clicked for:', product.title);
+    
+    // Panggil addToCart dari context
     addToCart(product);
     
-    // Show feedback
+    // Feedback visual
     setShowAddButton(false);
-    setTimeout(() => {
-      // Optional: Add toast notification here
-    }, 100);
+    
+    // Optional: Show toast notification
+    console.log('✅ Product added to cart:', product.title);
   };
 
   return (
@@ -75,6 +77,7 @@ const ProductCard = memo<ProductCardProps>(({ product, onEdit, onDelete }) => {
                 className="h-6 w-6"
                 onClick={(e) => {
                   e.preventDefault();
+                  e.stopPropagation();
                   onEdit(product);
                 }}
               >
@@ -86,6 +89,7 @@ const ProductCard = memo<ProductCardProps>(({ product, onEdit, onDelete }) => {
                 className="h-6 w-6 text-destructive hover:text-destructive"
                 onClick={(e) => {
                   e.preventDefault();
+                  e.stopPropagation();
                   onDelete(product.id);
                 }}
               >

@@ -5,7 +5,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Moon, Sun, LogOut, ShoppingCart, User, Menu } from 'lucide-react';
 import SearchBar from './SearchBar';
-import { useCart } from '@/contexts/CartContext';
+import { useCart } from '../../contexts/CartContext';
 
 const Navbar: React.FC = () => {
   const { getTotalItems } = useCart();

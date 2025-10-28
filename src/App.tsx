@@ -1,5 +1,4 @@
 // src/App.tsx
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProductProvider } from './contexts/ProductContext';
@@ -15,6 +14,7 @@ import Dashboard from './pages/Dashboard';
 import About from './pages/About';
 import Cart from './pages/Cart';
 import './App.css'
+import Checkout from './pages/Checkout';
 
 function App() {
   return (
@@ -22,9 +22,10 @@ function App() {
       <ErrorBoundary>
         <AuthProvider>
           <ProductProvider>
-            <CartProvider> {/* HANYA SATU CartProvider */}
+            <CartProvider>
               <Router>
                 <div className="min-h-screen bg-background text-foreground">
+                  {/* NAVBAR HARUS DI DALAM CartProvider */}
                   <Navbar />
                   <main>
                     <Routes>
@@ -34,6 +35,7 @@ function App() {
                       <Route path="/login" element={<Login />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/cart" element={<Cart />} />
+                      <Route path="/cart/checkout" element={<Checkout />} />
                       <Route
                         path="/dashboard"
                         element={

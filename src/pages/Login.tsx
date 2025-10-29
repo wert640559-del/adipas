@@ -1,5 +1,5 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
+// src/pages/Login.tsx
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/button';
@@ -15,18 +15,65 @@ const Login: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { register, handleSubmit, formState: { errors, isSubmitting }, setError } = useForm<LoginForm>();
+  
+  const [formData, setFormData] = useState<LoginForm>({
+    username: 'admin',
+    password: 'password'
+  });
+  const [errors, setErrors] = useState<Partial<LoginForm> & { root?: string }>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const from = (location.state as any)?.from?.pathname || '/dashboard';
 
-  const onSubmit = async (data: LoginForm) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    // Clear error when user starts typing
+    if (errors[name as keyof LoginForm]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: Partial<LoginForm> = {};
+
+    if (!formData.username.trim()) {
+      newErrors.username = 'Username is required';
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setErrors({});
+
     try {
-      await login(data.username, data.password);
+      await login(formData.username, formData.password);
       navigate(from, { replace: true });
     } catch (err) {
-      setError('root', { 
-        message: 'Invalid credentials. Use admin/password' 
+      setErrors({
+        root: 'Invalid credentials. Use admin/password'
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -37,34 +84,38 @@ const Login: React.FC = () => {
           <CardTitle className="text-2xl">Login to Dashboard</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={onSubmit} className="space-y-4">
             <div>
-              <label className="text-sm font-medium">Username</label>
+              <label htmlFor="username" className="text-sm font-medium">Username</label>
               <Input
-                {...register('username', { required: 'Username is required' })}
+                id="username"
+                name="username"
+                value={formData.username}
+                onChange={handleInputChange}
                 placeholder="Enter username"
-                defaultValue="admin"
               />
               {errors.username && (
-                <p className="text-sm text-destructive">{errors.username.message}</p>
+                <p className="text-sm text-destructive mt-1">{errors.username}</p>
               )}
             </div>
 
             <div>
-              <label className="text-sm font-medium">Password</label>
+              <label htmlFor="password" className="text-sm font-medium">Password</label>
               <Input
+                id="password"
+                name="password"
                 type="password"
-                {...register('password', { required: 'Password is required' })}
+                value={formData.password}
+                onChange={handleInputChange}
                 placeholder="Enter password"
-                defaultValue="password"
               />
               {errors.password && (
-                <p className="text-sm text-destructive">{errors.password.message}</p>
+                <p className="text-sm text-destructive mt-1">{errors.password}</p>
               )}
             </div>
 
             {errors.root && (
-              <p className="text-sm text-destructive text-center">{errors.root.message}</p>
+              <p className="text-sm text-destructive text-center">{errors.root}</p>
             )}
 
             <Button 
